@@ -18,5 +18,10 @@
   "homepage": "https://github.com/kie4280/discord-bot#readme",
   "serverless": {
     "app": "discord-bot"
+  },
+  "dependencies": {
+    "@netlify/functions": "^1.0.0",
+    "discord.js": "^13.8.1",
+    "netlify": "^11.0.2"
   }
 }
