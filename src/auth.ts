@@ -1,5 +1,4 @@
 import { Request } from "express";
-import { verifyKey } from "discord-interactions";
 import nacl from 'tweetnacl'
 
 function verifySig(req: Request): boolean {
@@ -9,7 +8,7 @@ function verifySig(req: Request): boolean {
 
   const signature = req.get("X-Signature-Ed25519");
   const timestamp = req.get("X-Signature-Timestamp");
-  const body = JSON.stringify(req.body); // rawBody is expected to be a string, not raw bytes
+  const body = JSON.stringify(req.body);
 
   if (signature == undefined || timestamp == undefined) return false;
   const isVerified = nacl.sign.detached.verify(
