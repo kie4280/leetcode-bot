@@ -1,5 +1,5 @@
 import express from "express";
-import { verifySig } from "./auth.js";
+import { verifySig, checkCommands } from "./utils.js";
 import discordjs, { Intents } from "discord.js";
 import bodyParser from "body-parser";
 import { getProblem } from "./dailypush.js";
@@ -28,6 +28,7 @@ const port = process.env.PORT == undefined ? 3000 : process.env.PORT;
 // main entry point for the webhook
 app.post("/webhook", (req, res) => {
   console.log("endpoint called")
+  console.log(req.body)
   if (!verifySig(req)) {
     res.status(401).end("invalid request signature");
     return;
@@ -45,6 +46,11 @@ app.post("/webhook", (req, res) => {
     const msg: string = interaction_obj.message.content;
     // console.log(client.channels.cache.keys())
     console.log(msg);
+    const f = {
+      type: InteractionResponseType.ChannelMessageWithSource,
+      data:{content:"hi"}
+    };
+    res.status(200).json(f)
   }
 });
 
@@ -74,5 +80,6 @@ app.get("/control", (req, res) => {
 });
 
 app.listen(port, () => {
+  checkCommands();
   console.log(`listening on ${port}`);
 });
