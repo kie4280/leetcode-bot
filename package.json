@@ -5,7 +5,8 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "test": "node dist/main.js",
+    "server": "node dist/main.js",
+    "testlc": "node dist/tests/lc.js",
     "build": "tsc"
   },
   "repository": {
