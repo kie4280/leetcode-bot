@@ -1,7 +1,11 @@
-import { getProblem } from "../dailypush.js";
+import { getProblem, getTags, LEVELS, Problem, Tag } from "../dailypush.js";
 
-const r = getProblem(1);
-r.then((r) => {}).catch((e) => {
-  console.log('err');
-  console.log(e.response.data)
-});
+
+
+const t = getTags()
+console.log(t)
+// const r = getProblem(LEVELS.EASY, t[0]);
+// r.then((r) => {}).catch((e) => {
+//   console.log('err');
+//   console.log(e.response.data)
+// });
