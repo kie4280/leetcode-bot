@@ -1,9 +1,9 @@
-import { getProblem, getTags, LEVELS, Problem, Tag } from "../dailypush.js";
+import { getProblem, getTags, LEVELS, Problem, Tag } from "../leetcode.js";
 
 
 
-const t = getTags()
-console.log(t)
+const tags = getTags()
+console.log(tags)
 // const r = getProblem(LEVELS.EASY, t[0]);
 // r.then((r) => {}).catch((e) => {
 //   console.log('err');

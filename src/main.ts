@@ -1,14 +1,15 @@
 import express from "express";
-import { verifySig, checkCommands } from "./utils.js";
-import discordjs, { Intents } from "discord.js";
+import { verifySig, registerCommands } from "./utils.js";
 import bodyParser from "body-parser";
-import { getProblem } from "./dailypush.js";
+import { getProblem } from "./leetcode.js";
 import dotenv from "dotenv";
+import { addChannel, deleteChannel } from "./database.js";
 import {
+  APIApplicationCommandInteraction,
   APIInteraction,
   APIInteractionResponse,
+  APIInteractionResponseChannelMessageWithSource,
   APIInteractionResponsePong,
-  APIMessageComponent,
   APIPingInteraction,
   InteractionResponseType,
   InteractionType,
@@ -27,8 +28,8 @@ const port = process.env.PORT == undefined ? 3000 : process.env.PORT;
 
 // main entry point for the webhook
 app.post("/webhook", (req, res) => {
-  console.log("endpoint called")
-  console.log(req.body)
+  console.log("endpoint called");
+  console.log(req.body);
   if (!verifySig(req)) {
     res.status(401).end("invalid request signature");
     return;
@@ -42,21 +43,15 @@ app.post("/webhook", (req, res) => {
     };
     res.status(200).json(f);
     return;
-  } else if (interaction_obj.type == InteractionType.MessageComponent) {
-    const msg: string = interaction_obj.message.content;
-    // console.log(client.channels.cache.keys())
-    console.log(msg);
-    const f = {
+  } else if (interaction_obj.type == InteractionType.ApplicationCommand) {
+    const f: APIInteractionResponseChannelMessageWithSource = {
       type: InteractionResponseType.ChannelMessageWithSource,
-      data:{content:"hi"}
+      data: { content: "Roger that!" },
     };
-    res.status(200).json(f)
+    res.status(200).json(f);
+    applicationComm(interaction_obj);
   }
 });
-
-app.get("/webhook", (req, res) => {
-  console.log("sdfkgfdkjghkj")
-})
 
 app.get("/", (req, res) => {
   res.status(200).end("hi there");
@@ -80,6 +75,24 @@ app.get("/", (req, res) => {
 // });
 
 app.listen(port, () => {
-  checkCommands();
+  registerCommands();
   console.log(`listening on ${port}`);
 });
+
+function applicationComm(interaction: APIApplicationCommandInteraction) {
+  switch (interaction.data.name) {
+    case "pushproblem":
+      const sub: string = (interaction.data as any).options[0].name;
+      const chanID = interaction.channel_id;
+      // console.log("option", option)
+      if (sub == "off") {
+        deleteChannel(chanID);
+      } else if (sub == "on") {
+        addChannel(chanID);
+      }
+      break;
+
+    default:
+      break;
+  }
+}

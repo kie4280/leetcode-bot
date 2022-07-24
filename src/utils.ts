@@ -1,10 +1,13 @@
 import { Request } from "express";
 import nacl from "tweetnacl";
-import { REGISTER_COMMAND, PUSH_COMMAND } from "./commands.js";
+import { PUSH_COMMAND } from "./commands.js";
 import { REST } from "@discordjs/rest";
-import { SlashCommandBuilder } from "@discordjs/builders";
+import {
+  SlashCommandBuilder,
+  SlashCommandSubcommandBuilder,
+} from "@discordjs/builders";
 import { Routes } from "discord-api-types/v10";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
 const PUBLIC_KEY =
   "50859e60b1f8ee81bec4047e4b30a2cfa8cc87e84f703c5c1d6a549893135f8b";
@@ -31,17 +34,38 @@ const rest = new REST({ version: "10" }).setToken(
   process.env.BOT_TOKEN as string
 );
 
-async function checkCommands(): Promise<boolean> {
+async function registerCommands(): Promise<void> {
+  const sub_on = new SlashCommandSubcommandBuilder()
+    .setName("on")
+    .setDescription("Turn on");
+  const sub_off = new SlashCommandSubcommandBuilder()
+    .setName("off")
+    .setDescription("Turn off");
   const c = new SlashCommandBuilder()
     .setName(PUSH_COMMAND)
-    .setDescription("Push daily leetcode");
+    .setDescription("Push daily leetcode")
+    .addSubcommand(sub_off)
+    .addSubcommand(sub_on);
 
-  await rest.post(Routes.applicationCommands(APPLICATION_ID), {
+  const r = (await rest.post(Routes.applicationCommands(APPLICATION_ID), {
     body: c,
-  });
-  return true;
+  })) as Array<any>;
 }
 
-async function sendMsg() {}
+async function deleteAllCommands(): Promise<number> {
+  const r = (await rest.get(
+    Routes.applicationCommands(APPLICATION_ID)
+  )) as Array<any>;
 
-export { verifySig, checkCommands };
+  r.forEach(async (element) => {
+    await rest.delete(Routes.applicationCommand(APPLICATION_ID, element.id));
+  });
+  console.log(r);
+  return r.length;
+}
+
+async function sendMsg(msg: string) {
+  // await rest.post(Routes.channelMessage());
+}
+
+export { verifySig, registerCommands, sendMsg };
