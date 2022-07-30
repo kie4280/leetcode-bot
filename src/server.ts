@@ -1,7 +1,7 @@
 import express from "express";
-import { verifySig, registerCommands } from "./utils.js";
+import { verifySig, registerCommands } from "./discord.js";
 import bodyParser from "body-parser";
-import { getProblem } from "./leetcode.js";
+import { dailyPush, getProblem } from "./leetcode.js";
 import dotenv from "dotenv";
 import { addChannel, deleteChannel } from "./database.js";
 import {
@@ -21,10 +21,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const port = process.env.PORT == undefined ? 3000 : process.env.PORT;
-// const client = new discordjs.Client({
-//   intents: ["DIRECT_MESSAGES", "GUILD_MESSAGES"],
-// });
-// client.login(process.env.BOT_TOKEN)
 
 // main entry point for the webhook
 app.post("/webhook", (req, res) => {
@@ -44,17 +40,25 @@ app.post("/webhook", (req, res) => {
     res.status(200).json(f);
     return;
   } else if (interaction_obj.type == InteractionType.ApplicationCommand) {
-    const f: APIInteractionResponseChannelMessageWithSource = {
-      type: InteractionResponseType.ChannelMessageWithSource,
-      data: { content: "Roger that!" },
-    };
+    const f = applicationComm(interaction_obj);
     res.status(200).json(f);
-    applicationComm(interaction_obj);
   }
 });
 
+// For testing purposes
 app.get("/", (req, res) => {
   res.status(200).end("hi there");
+});
+
+app.post("/dailypush", (req, res) => {
+  dailyPush().then(
+    (val) => {
+      res.sendStatus(200);
+    },
+    (err) => {
+      res.sendStatus(500);
+    }
+  );
 });
 
 // app.get("/control", (req, res) => {
@@ -80,19 +84,28 @@ app.listen(port, () => {
 });
 
 function applicationComm(interaction: APIApplicationCommandInteraction) {
+  let f: APIInteractionResponseChannelMessageWithSource = {
+    type: InteractionResponseType.ChannelMessageWithSource,
+    data: {},
+  };
   switch (interaction.data.name) {
     case "pushproblem":
       const sub: string = (interaction.data as any).options[0].name;
       const chanID = interaction.channel_id;
       // console.log("option", option)
+
       if (sub == "off") {
         deleteChannel(chanID);
+        f.data.content = "Roger that! It's off.";
       } else if (sub == "on") {
         addChannel(chanID);
+        f.data.content = "It's on baby!";
       }
       break;
 
     default:
       break;
   }
+
+  return f;
 }

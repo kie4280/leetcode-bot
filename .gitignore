@@ -3,3 +3,4 @@
 tsconfig.tsbuildinfo
 dist
 firebase-cred.json
+package-lock.json

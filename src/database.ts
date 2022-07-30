@@ -41,4 +41,19 @@ async function listChannels() {
   return chans.val() as Array<string>;
 }
 
-export { addChannel, deleteChannel, listChannels };
+async function saveTag(index: number) {
+  let ref = db.ref("/lastTagIndex");
+  await ref.update(index);
+}
+
+async function getTag(): Promise<number> {
+  let ref = db.ref("/");
+  const d = await ref.child("lastTagIndex").get();
+  let last = 0;
+  if (d.exists()) {
+    last = d.val();
+  }
+  return last as number;
+}
+
+export { addChannel, deleteChannel, listChannels, saveTag, getTag };

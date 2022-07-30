@@ -5,6 +5,8 @@ import { REST } from "@discordjs/rest";
 import {
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder,
+  channelMention,
+  EmbedBuilder,
 } from "@discordjs/builders";
 import { Routes } from "discord-api-types/v10";
 import dotenv from "dotenv";
@@ -64,8 +66,11 @@ async function deleteAllCommands(): Promise<number> {
   return r.length;
 }
 
-async function sendMsg(msg: string) {
-  // await rest.post(Routes.channelMessage());
+async function sendMsg(chanID: string, msg: string, embed?: EmbedBuilder) {
+  const m = await rest.post(Routes.channelMessages(chanID), {
+    body: { content: msg, embeds: embed ? [embed.toJSON()] : undefined },
+  });
+  return m;
 }
 
 export { verifySig, registerCommands, sendMsg };

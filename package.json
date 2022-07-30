@@ -2,12 +2,13 @@
   "name": "discord-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
-    "server": "node dist/main.js",
+    "server": "node dist/server.js",
     "testlc": "node dist/tests/lc.js",
     "testdb": "node dist/tests/db.js",
+    "testds": "node dist/tests/ds.js",
     "build": "tsc"
   },
   "repository": {
@@ -23,16 +24,13 @@
   "dependencies": {
     "@discordjs/builders": "^0.15.0",
     "@discordjs/rest": "^0.5.0",
-    "@netlify/functions": "^1.0.0",
     "axios": "^0.27.2",
     "body-parser": "^1.20.0",
     "discord-api-types": "^0.36.1",
-    "discord.js": "^13.8.1",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "firebase": "^9.9.1",
     "firebase-admin": "^11.0.0",
-    "netlify": "^11.0.2",
     "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
