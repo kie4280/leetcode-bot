@@ -158,6 +158,7 @@ async function dailyPush() {
   if (now.getDay() == 6) {
     tag = tag > 70 ? 0 : tag + 1;
   }
+
   const diffi = randomLevel();
   const probs = await getProblems(Object.keys(LEVELS)[diffi], tags[tag].slug);
   const channels = await listChannels();
