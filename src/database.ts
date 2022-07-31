@@ -38,6 +38,7 @@ async function deleteChannel(channelID: string) {
 
 async function listChannels() {
   let chans = await db.ref("/channels").get();
+  if (chans.val() == null) return [];
   return chans.val() as Array<string>;
 }
 

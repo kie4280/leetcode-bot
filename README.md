@@ -12,7 +12,7 @@ This bot accepts Discord slash commands.
 
 ```/pushproblem off``` for unregistering this channel for push problems.
 
-**USE YOUR OWN CREDENTIALS!!** I'm not going to provide you with free firebase or heroku usage. 
+**USE YOUR OWN CREDENTIALS!!** I'm not going to provide you with free firebase, Discord bot or heroku usage. 
 
 
 ## Dependency

@@ -56,27 +56,11 @@ app.post("/dailypush", (req, res) => {
       res.sendStatus(200);
     },
     (err) => {
-      res.sendStatus(500);
+      res.status(500).send(err);
     }
   );
 });
 
-// app.get("/control", (req, res) => {
-//   const t: string = req.body.type;
-//   switch (t) {
-//     case "push":
-//       getProblem(1).then(
-//         (accept) => {},
-//         (reject) => {
-//           res.status(500).end("error getting problem");
-//         }
-//       );
-//       break;
-
-//     default:
-//       break;
-//   }
-// });
 
 app.listen(port, () => {
   registerCommands();

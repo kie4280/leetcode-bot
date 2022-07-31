@@ -9,7 +9,8 @@
     "testlc": "node dist/tests/lc.js",
     "testdb": "node dist/tests/db.js",
     "testds": "node dist/tests/ds.js",
-    "build": "tsc"
+    "build": "tsc",
+    "deploy": "heroku container:push -a leetcodetw-uiuc web && heroku container:release -a leetcodetw-uiuc web"
   },
   "repository": {
     "type": "git",

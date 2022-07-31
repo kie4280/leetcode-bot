@@ -1,7 +1,8 @@
 import { EmbedBuilder } from "@discordjs/builders";
+import { DiscordAPIError } from "@discordjs/rest";
 import axios from "axios";
 import fs from "fs";
-import { getTag, listChannels, saveTag } from "./database.js";
+import { deleteChannel, getTag, listChannels, saveTag } from "./database.js";
 import { sendMsg } from "./discord.js";
 
 // code inspired by reverse-engineering leetcode.com
@@ -156,7 +157,7 @@ function formatProb(p: Problem): EmbedBuilder {
 }
 
 async function dailyPush() {
-  let customMsg = "每日一題來啦！";
+  let customMsg = "#每日一題來啦！";
   let [tags, tag] = await Promise.all([readTags(), getTag()]);
 
   const now = new Date(Date.now());
@@ -175,7 +176,15 @@ async function dailyPush() {
   const em = formatProb(prob);
   channels.forEach((v, i, o) => {
     const msg = `@everyone ${customMsg}\n本週主題: ${tags[tag].name}\n${prob.url}`;
-    sendMsg(v, msg, em);
+
+    sendMsg(v, msg, em).catch((err) => {
+      console.log(err);
+      if (err instanceof DiscordAPIError && err.code == 10003) {
+        deleteChannel(v);
+      } else {
+        throw err;
+      }
+    });
   });
 }
 
