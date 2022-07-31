@@ -52,6 +52,8 @@ async function getTag(): Promise<number> {
   let last = 0;
   if (d.exists()) {
     last = d.val();
+  } else {
+    await ref.update({ lastTagIndex: 0 });
   }
   return last as number;
 }

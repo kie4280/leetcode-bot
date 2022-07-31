@@ -1,7 +1,7 @@
 import { EmbedBuilder } from "@discordjs/builders";
 import axios from "axios";
 import fs from "fs";
-import { getTag, listChannels } from "./database.js";
+import { getTag, listChannels, saveTag } from "./database.js";
 import { sendMsg } from "./discord.js";
 
 // code inspired by reverse-engineering leetcode.com
@@ -139,13 +139,16 @@ async function readTags(filep: string = "topicTags.json"): Promise<Array<Tag>> {
 function formatProb(p: Problem): EmbedBuilder {
   const b = new EmbedBuilder()
     .setColor(0x0099ff)
-    .setTitle(p.title)
+    .setTitle(`${p.id}. ${p.title}`)
     .setURL(p.url)
     .addFields(
       { name: "Difficulty", value: p.difficulty, inline: true },
       { name: "Acceptance Rate", value: p.acRate, inline: true },
-      { name: "Has Solution", value: String(p.hasSolution), inline: true },
-      { name: "Is Paid", value: String(p.isPaid), inline: true },
+      {
+        name: "Has Solution/Is Paid",
+        value: String(p.hasSolution) + "/" + String(p.isPaid),
+        inline: true,
+      },
       { name: "Topics", value: String(p.topic) }
     );
 
@@ -153,22 +156,25 @@ function formatProb(p: Problem): EmbedBuilder {
 }
 
 async function dailyPush() {
-  let title = "每日一題來啦！";
-  const tags = await readTags();
-  let tag = await getTag();
+  let customMsg = "每日一題來啦！";
+  let [tags, tag] = await Promise.all([readTags(), getTag()]);
+
   const now = new Date(Date.now());
   if (now.getDay() == 6) {
     tag = tag > 70 ? 0 : tag + 1;
+    await saveTag(tag);
   }
 
   const diffi = randomLevel();
-  const probs = await getProblems(Object.keys(LEVELS)[diffi], tags[tag].slug);
-  const channels = await listChannels();
+  const [probs, channels] = await Promise.all([
+    getProblems(Object.keys(LEVELS)[diffi], tags[tag].slug),
+    listChannels(),
+  ]);
   const index = Math.floor(Math.random() * probs.total);
   const prob = probs.problems[index];
   const em = formatProb(prob);
   channels.forEach((v, i, o) => {
-    const msg = `@everyone ${title}\n ${prob.url}`;
+    const msg = `@everyone ${customMsg}\n本週主題: ${tags[tag].name}\n${prob.url}`;
     sendMsg(v, msg, em);
   });
 }
