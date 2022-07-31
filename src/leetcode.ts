@@ -13,6 +13,7 @@ type Problem = {
   isPaid: boolean;
   topic: Array<string>;
   acRate: string;
+  id: string;
 };
 
 const ltBase = "https://leetcode.com/problems/";
@@ -71,10 +72,11 @@ async function getProblems(
       const ps = r.data.data.problemsetQuestionList;
       const total: number = ps.total;
       const questions: Array<any> = ps.questions;
-
+      // console.debug(questions);
       const problems: Problem[] = [];
       questions.forEach((v, i, o) => {
         let p: Problem = {
+          id: v.frontendQuestionId,
           title: v.title,
           url: ltBase + v.titleSlug,
           difficulty: v.difficulty,
@@ -171,4 +173,4 @@ async function dailyPush() {
   });
 }
 
-export { dailyPush, getProblems as getProblem, readTags, LEVELS, Problem, Tag };
+export { dailyPush, getProblems, readTags, LEVELS, Problem, Tag };

@@ -1,7 +1,7 @@
 import express from "express";
 import { verifySig, registerCommands } from "./discord.js";
 import bodyParser from "body-parser";
-import { dailyPush, getProblem } from "./leetcode.js";
+import { dailyPush, getProblems } from "./leetcode.js";
 import dotenv from "dotenv";
 import { addChannel, deleteChannel } from "./database.js";
 import {

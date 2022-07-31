@@ -1,5 +1,5 @@
 import {
-  getProblem,
+  getProblems,
   dailyPush,
   readTags,
   LEVELS,
@@ -12,12 +12,12 @@ import {
 //   console.log(val.length);
 // });
 
-// const r = getProblem(LEVELS.EASY, "array");
-// r.then((r) => {
-//   console.log(r);
-// }).catch((e) => {
-//   console.log("err");
-//   console.log(e.response.data);
-// });
+const r = getProblems(LEVELS.EASY, "array");
+r.then((r) => {
+  console.log(r);
+}).catch((e) => {
+  console.log("err");
+  console.log(e.response.data);
+});
 
-dailyPush().catch((err) => console.log(err));
+// dailyPush().catch((err) => console.log(err));
