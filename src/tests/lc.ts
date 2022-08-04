@@ -26,3 +26,4 @@ r.then((r) => {
 
 // const d = new Date(Date.now());
 // console.log(d.getDay())
+// process.exit(0);

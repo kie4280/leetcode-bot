@@ -1,9 +1,18 @@
 import { addChannel, deleteChannel, listChannels } from "../database.js";
 
-addChannel("sjkldjsklfj").then(() => {
-  deleteChannel("2");
-});
+addChannel("1")
+  .then(() => {
+    return addChannel("2");
+  })
+  .then(() => {
+    return deleteChannel("1");
+  })
+  .then(() => {
+    return deleteChannel("2");
+  });
 
 listChannels().then((val) => {
-  console.log(val);
+  console.log(val[0] == null);
 });
+
+process.exit(0);

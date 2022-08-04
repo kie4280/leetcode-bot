@@ -189,6 +189,8 @@ async function dailyPush() {
     while (qs.has(index)) {
       index = Math.floor(Math.random() * probs.total); // prevent duplicate probs in this week
     }
+  } else {
+    sq.seen = [];
   }
   sq.seen.push(index);
   saveSeenQuestions(tag, sq.seen);
