@@ -12,14 +12,17 @@ import {
 //   console.log(val.length);
 // });
 
-// const r = getProblems(LEVELS.EASY, "array");
-// r.then((r) => {
-//   console.log(r);
-// }).catch((e) => {
-//   console.log("err");
-//   console.log(e.response.data);
-// });
+const r = getProblems(LEVELS.EASY, "array");
+r.then((r) => {
+  console.log(r);
+}).catch((e) => {
+  console.log("err");
+  console.log(e.response.data);
+});
 
-dailyPush()
-  .then((val) => {})
-  .catch((err) => console.log(err));
+// dailyPush()
+//   .then((val) => {})
+//   .catch((err) => console.log(err));
+
+// const d = new Date(Date.now());
+// console.log(d.getDay())

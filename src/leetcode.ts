@@ -2,7 +2,14 @@ import { EmbedBuilder } from "@discordjs/builders";
 import { DiscordAPIError } from "@discordjs/rest";
 import axios from "axios";
 import fs from "fs";
-import { deleteChannel, getTag, listChannels, saveTag } from "./database.js";
+import {
+  deleteChannel,
+  getSeenQuestions,
+  getTag,
+  listChannels,
+  saveSeenQuestions,
+  saveTag,
+} from "./database.js";
 import { sendMsg } from "./discord.js";
 
 // code inspired by reverse-engineering leetcode.com
@@ -158,20 +165,33 @@ function formatProb(p: Problem): EmbedBuilder {
 
 async function dailyPush() {
   let customMsg = "#每日一題來啦！";
-  let [tags, tag] = await Promise.all([readTags(), getTag()]);
+  let [tags, tag, sq] = await Promise.all([
+    readTags(),
+    getTag(),
+    getSeenQuestions(),
+  ]);
 
   const now = new Date(Date.now());
-  if (now.getDay() == 6) {
-    tag = tag > 70 ? 0 : tag + 1;
+  const diffi = randomLevel();
+  if (now.getDay() == 0) {
+    tag = tag > 70 - 15 ? 0 : tag + 1;
     await saveTag(tag);
   }
 
-  const diffi = randomLevel();
   const [probs, channels] = await Promise.all([
     getProblems(Object.keys(LEVELS)[diffi], tags[tag].slug),
     listChannels(),
   ]);
-  const index = Math.floor(Math.random() * probs.total);
+  let index = Math.floor(Math.random() * probs.total);
+  let qs: Set<number> = new Set(sq.seen);
+
+  if (sq.tagIndex == tag && probs.total >= 7) {
+    while (qs.has(index)) {
+      index = Math.floor(Math.random() * probs.total); // prevent duplicate probs in this week
+    }
+  }
+  sq.seen.push(index);
+  saveSeenQuestions(tag, sq.seen);
   const prob = probs.problems[index];
   const em = formatProb(prob);
   channels.forEach((v, i, o) => {

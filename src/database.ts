@@ -59,4 +59,35 @@ async function getTag(): Promise<number> {
   return last as number;
 }
 
-export { addChannel, deleteChannel, listChannels, saveTag, getTag };
+async function getSeenQuestions(): Promise<{
+  tagIndex: number;
+  seen: Array<number>;
+}> {
+  let ref = db.ref("/");
+  const d = await ref.child("seenQuestions").get();
+  let seen: { tagIndex: number; seen: Array<number> } = {
+    tagIndex: -1,
+    seen: [],
+  };
+  if (d.exists()) {
+    seen = d.val() as { tagIndex: number; seen: Array<number> };
+  } 
+  return seen;
+}
+
+async function saveSeenQuestions(
+  tag: number,
+  seen: Array<number>
+): Promise<void> {
+  let ref = db.ref("/");
+  await ref.update({ seenQuestions: { tagIndex: tag, seen: seen } });
+}
+export {
+  addChannel,
+  deleteChannel,
+  listChannels,
+  saveTag,
+  getTag,
+  saveSeenQuestions,
+  getSeenQuestions,
+};

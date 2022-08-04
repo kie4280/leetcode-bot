@@ -22,6 +22,33 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const port = process.env.PORT == undefined ? 3000 : process.env.PORT;
 
+function applicationComm(interaction: APIApplicationCommandInteraction) {
+  let f: APIInteractionResponseChannelMessageWithSource = {
+    type: InteractionResponseType.ChannelMessageWithSource,
+    data: {},
+  };
+  switch (interaction.data.name) {
+    case "pushproblem":
+      const sub: string = (interaction.data as any).options[0].name;
+      const chanID = interaction.channel_id;
+      // console.log("option", option)
+
+      if (sub == "off") {
+        deleteChannel(chanID);
+        f.data.content = "Roger that! It's off.";
+      } else if (sub == "on") {
+        addChannel(chanID);
+        f.data.content = "It's on baby!";
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  return f;
+}
+
 // main entry point for the webhook
 app.post("/webhook", (req, res) => {
   console.log("endpoint called");
@@ -61,35 +88,18 @@ app.post("/dailypush", (req, res) => {
   );
 });
 
-
-app.listen(port, () => {
+const server = app.listen(port, () => {
   registerCommands();
   console.log(`listening on ${port}`);
 });
 
-function applicationComm(interaction: APIApplicationCommandInteraction) {
-  let f: APIInteractionResponseChannelMessageWithSource = {
-    type: InteractionResponseType.ChannelMessageWithSource,
-    data: {},
-  };
-  switch (interaction.data.name) {
-    case "pushproblem":
-      const sub: string = (interaction.data as any).options[0].name;
-      const chanID = interaction.channel_id;
-      // console.log("option", option)
+const onExit = () => {
+  server.close((err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  process.exit(0);
+};
 
-      if (sub == "off") {
-        deleteChannel(chanID);
-        f.data.content = "Roger that! It's off.";
-      } else if (sub == "on") {
-        addChannel(chanID);
-        f.data.content = "It's on baby!";
-      }
-      break;
-
-    default:
-      break;
-  }
-
-  return f;
-}
+process.on("SIGTERM", onExit);
