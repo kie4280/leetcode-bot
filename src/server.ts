@@ -83,7 +83,8 @@ app.post("/dailypush", (req, res) => {
       res.sendStatus(200);
     },
     (err) => {
-      res.status(500).send(err);
+      console.error(err);
+      res.status(500).send({ error: String(err) });
     }
   );
 });

@@ -44,7 +44,7 @@ async function listChannels() {
 
 async function saveTag(index: number) {
   let ref = db.ref("/lastTagIndex");
-  await ref.update(index);
+  await ref.set(index);
 }
 
 async function getTag(): Promise<number> {
